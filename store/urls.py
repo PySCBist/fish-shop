@@ -1,0 +1,8 @@
+from django.urls import path
+
+from store import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('basket/', views.basket, name='basket'),
+]

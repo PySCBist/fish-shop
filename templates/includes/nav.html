@@ -1,0 +1,26 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+	<a class="navbar-brand" href="{% url 'index' %}">
+      <img src="{% static 'store/img/fish.png' %}" alt="Fishicon" width="30" height="24">
+    </a>
+    <a class="navbar-brand" href="{% url 'index' %}">Радужная форель</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Переключатель навигации">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Главная</a>
+        <a class="nav-link disabled" href="#">О нас</a>
+	  	<p class="form-inline my-2 my-lg-0 position-absolute end-0">
+		  <a href="#" class="btn btn-warning">Войти</a>
+		  <a href="{% url 'basket' %}">
+		   <img  id="cart-icon" src="{% static 'store/img/cart.png' %}" alt="...">
+		  </a>
+			<p class="position-absolute end-0" id="cart-total">0</p>
+
+	  	</p>
+	  </div>
+    </div>
+  </div>
+</nav>
