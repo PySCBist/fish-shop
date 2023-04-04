@@ -7,3 +7,7 @@ def index(request):
 
 def basket(request):
     return render(request, 'store/basket.html', context={})
+
+
+def checkout(request):
+    return render(request, 'store/checkout.html', context={})
