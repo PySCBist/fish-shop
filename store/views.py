@@ -11,3 +11,7 @@ def basket(request):
 
 def checkout(request):
     return render(request, 'store/checkout.html', context={})
+
+
+def about(request):
+    return render(request, 'store/about.html', context={})
