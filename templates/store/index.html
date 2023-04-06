@@ -21,7 +21,7 @@
           {% endthumbnail %}
           <h1 class="card-title pricing-card-title">{{ product.price|floatformat:0 }} &#8381; <small class="text-muted">/ кг.</small></h1>
           <p class="lead">{{ product.description }}</p>
-          <button class="btn btn-outline-primary">Добавить в корзину</button>
+          <button data-product={{ product.id }} data-action="add" class="btn btn-outline-primary add-btn update-cart">Добавить в корзину</button>
         </div>
      </div>
 	  </div>

@@ -1,7 +1,10 @@
+import json
+
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 
-from .models import Product, Order
+from .models import Product, Order, OrderItem
 
 
 class ProductListView(ListView):
@@ -29,3 +32,25 @@ def checkout(request):
 
 def about(request):
     return render(request, 'store/about.html', context={})
+
+
+def update_item(request):
+    data = json.loads(request.body)
+    product_id = data['productId']
+    action = data['action']
+
+    product = Product.objects.get(id=product_id)
+    order, created = Order.objects.get_or_create(customer=request.user,
+                                                 status='new')
+    order_item, created = OrderItem.objects.get_or_create(order=order,
+                                                          product=product)
+    if action == 'add':
+        order_item.quantity += 1
+    elif action == 'remove':
+        order_item.quantity -= 1
+
+    order_item.save()
+    if order_item.quantity <= 0:
+        order_item.delete()
+
+    return JsonResponse('Item was added', safe=False)
