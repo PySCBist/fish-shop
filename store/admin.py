@@ -30,7 +30,7 @@ admin.site.register(Order, OrderAdmin)
 
 
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('product', 'order', 'quantity',)
+    list_display = ('product', 'order', 'quantity', 'weight')
     search_fields = ('order',)
     list_filter = ('order',)
     ordering = ('order',)

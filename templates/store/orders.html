@@ -14,10 +14,9 @@
       <table class="table">
         <tr>
         <th><h5>Общее кол-во: <strong>{{ order.get_total_items }}</strong></h5></th>
+        <th><h5>Полная стоимость: <strong>{{ order.get_total_price|floatformat:0 }} р.</strong></h5></th>
         <th>
-          {% if order.get_total_items > 0 %}
-            <a style="float: right; margin:5px" class="btn btn-success make-order" href="#">Заказать</a>
-          {% endif %}
+          <a style="float: right; margin:5px" class="btn btn-success" href="{% url 'orders' %}">Заказать</a>
         </th>
         </tr>
       </table>
@@ -33,9 +32,9 @@
     <div class="cart-row">
       <div style="flex: 2"></div>
       <div style="flex: 2"><strong>Наименование</strong></div>
-      <div style="flex: 2"><strong>Описание</strong></div>
       <div style="flex: 1"><strong>Цена</strong></div>
       <div style="flex: 1"><strong>Кол-во (шт.)</strong></div>
+      <div style="flex: 1"><strong>Общая стоимость</strong></div>
     </div>
     {% for item in items %}
     <div class="cart-row">
@@ -43,7 +42,6 @@
       <div style="flex: 2; display: inline-block"><img class="row-image" src="{{ im.url }}" alt="product"></div>
       {% endthumbnail %}
       <div style="flex: 2">{{ item.product }}</div>
-      <div style="flex: 2">{{ item.product.description }}</div>
       <div style="flex: 1">{{ item.product.price|floatformat:0 }} р. / кг.</div>
       <div style="flex:1">
         <p class="quantity">{{ item.quantity }}</p>
@@ -52,13 +50,10 @@
           <img data-product={{ item.product.id }} data-action="remove" class="chg-quantity update-cart" src="{% static  'store/img/arrow-down.png' %}" alt="arrow-down">
         </div>
       </div>
+      <div style="flex: 1">{{ item.get_total|floatformat:0 }} р.</div>
     </div>
       {% endfor %}
     </div>
   </div>
 </div>
 {% endblock %}
-
-{% block script %}
-  <script type="text/javascript" src="{% static 'store/js/makeOrder.js' %}"></script>
-{% endblock script %}

@@ -1,7 +1,8 @@
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
 
 from .models import Product, Order, OrderItem
@@ -11,12 +12,24 @@ class ProductListView(ListView):
     model = Product
     template_name = 'store/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['order'] = False
+        if self.request.user.is_authenticated:
+            if Order.objects.filter(customer=self.request.user,
+                                    status='formed').exists():
+                context['order'] = True
+        return context
+
 
 def basket(request):
     if request.user.is_authenticated:
+        if Order.objects.filter(customer=request.user,
+                                status='formed').exists():
+            return redirect('orders')
         order, created = Order.objects.get_or_create(
             customer=request.user,
-            status='new')
+            status='not formed')
         items = order.orderitem_set.all()
     else:
         items = []
@@ -26,8 +39,12 @@ def basket(request):
                   context={'items': items, 'order': order})
 
 
-def checkout(request):
-    return render(request, 'store/checkout.html', context={})
+@login_required()
+def orders(request):
+    order = Order.objects.get(customer=request.user, status='formed')
+    items = order.orderitem_set.all()
+    return render(request, 'store/orders.html',
+                  context={'items': items, 'order': order})
 
 
 def about(request):
@@ -41,7 +58,7 @@ def update_item(request):
 
     product = Product.objects.get(id=product_id)
     order, created = Order.objects.get_or_create(customer=request.user,
-                                                 status='new')
+                                                 status='not formed')
     order_item, created = OrderItem.objects.get_or_create(order=order,
                                                           product=product)
     if action == 'add':
@@ -54,3 +71,14 @@ def update_item(request):
         order_item.delete()
 
     return JsonResponse('Item was added', safe=False)
+
+
+def make_order(request):
+    if Order.objects.filter(customer=request.user,
+                            status='not formed').exists():
+        order = Order.objects.get(customer=request.user,
+                                  status='not formed')
+        order.status = 'formed'
+        order.save()
+        return JsonResponse('Order formed')
+    return JsonResponse('No products in basket. Order not formed.')

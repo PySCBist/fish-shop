@@ -56,9 +56,11 @@ class Product(models.Model):
 
 class Order(models.Model):
     ORDER_STATUS = [
-        ('new', 'новый'),
+        ('not formed', 'не сформирован'),
+        ('formed', 'сформирован'),
+        ('processed', 'обработан'),
         ('paid', 'оплачен'),
-        ('shipped', 'отгружено')
+        ('shipped', 'отгружен')
     ]
 
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False,
@@ -97,8 +99,10 @@ class OrderItem(models.Model):
                                 blank=False, null=True, verbose_name='Продукт')
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=False,
                               null=True, verbose_name='Заказ')
-    quantity = models.IntegerField(default=0, blank=False, null=True,
-                                   verbose_name='Кол-во')
+    quantity = models.PositiveIntegerField(default=0, blank=False, null=True,
+                                           verbose_name='Кол-во (шт.)')
+    weight = models.PositiveIntegerField(default=0, blank=False,
+                                         verbose_name='Общий вес (грамм)')
 
     class Meta:
         verbose_name = 'Позиция заказа'
@@ -108,4 +112,4 @@ class OrderItem(models.Model):
 
     @property
     def get_total(self):
-        return self.product.price * self.quantity
+        return self.product.price * self.weight
