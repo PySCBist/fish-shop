@@ -1,21 +1,21 @@
 let updateBtns = document.getElementsByClassName('update-cart')
 
-for (let i = 0; i < updateBtns.length; i++){
-    updateBtns[i].addEventListener('click', function (){
+for (let i = 0; i < updateBtns.length; i++) {
+    updateBtns[i].addEventListener('click', function () {
         let productId = this.dataset.product
         let action = this.dataset.action
         console.log('productId:', productId, 'action:', action)
 
         console.log('USER:', user)
-        if(user === 'AnonymousUser'){
+        if (user === 'AnonymousUser') {
             console.log('Not logged in')
-        }else {
-            updateUserOrder(productId, action)
+        } else {
+            updateOrderItem(productId, action)
         }
     })
 }
 
-function updateUserOrder(productId, action){
+function updateOrderItem(productId, action){
     console.log('User is logged in, sending data...')
 
     let url = '/update_item/'
@@ -32,8 +32,16 @@ function updateUserOrder(productId, action){
             return response.json()
     })
         .then((data) => {
-            console.log('data:', data)
-            location.reload()
+            if (data.quantity === 0) {
+                location.reload()
+            } else {
+                let itemquantity = "item-quantity" + productId
+                let element = document.getElementById(itemquantity)
+                if (element !== null) {
+                    document.getElementById(itemquantity).textContent = data.quantity
+                    document.getElementById("total-items").textContent = data.total_items
+                }
+            }
         })
 
 }

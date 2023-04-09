@@ -72,7 +72,7 @@ class Order(models.Model):
                                 null=True,
                                 verbose_name='Адрес доставки заказа')
     delivery_date = models.ForeignKey(DeliveryDate, on_delete=models.SET_NULL,
-                                      null=True, blank=False,
+                                      null=True, blank=True,
                                       verbose_name='Дата доставки')
 
     class Meta:

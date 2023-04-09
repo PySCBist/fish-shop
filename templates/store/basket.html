@@ -13,16 +13,22 @@
 
       <table class="table">
         <tr>
-        <th><h5>Общее кол-во: <strong>{{ order.get_total_items }}</strong></h5></th>
+        <th><h5>Общее кол-во: <strong id="total-items">{{ order.get_total_items }}</strong> шт.</h5></th>
         <th>
-          {% if order.get_total_items > 0 %}
+          {% if order.get_total_items > 0 and order.delivery_date %}
             <a style="float: right; margin:5px" class="btn btn-success make-order" href="#">Заказать</a>
           {% endif %}
         </th>
         </tr>
       </table>
-      <div>
-        <h5><strong>Дата доставки:</strong> {{ order.delivery_date }}</h5>
+	<div>
+		<h5><strong>Дата доставки: </strong>
+		  {% if order.delivery_date %}
+		  	{{ order.delivery_date }}</h5>
+		  {% else %}Нет доступной даты доставки</h5>
+		   <th>Вы сможете сделать заказ, когда появится новая дата доставки.</th>
+		  {% endif %}
+
         <h5><strong>Адрес доставки:</strong> {{ order.address }}</h5>
       </div>
     </div>
@@ -46,7 +52,7 @@
       <div style="flex: 2">{{ item.product.description }}</div>
       <div style="flex: 1">{{ item.product.price|floatformat:0 }} р. / кг.</div>
       <div style="flex:1">
-        <p class="quantity">{{ item.quantity }}</p>
+        <p class="quantity" id="item-quantity{{ item.product.id }}">{{ item.quantity }}</p>
         <div class="quantity">
           <img data-product={{ item.product.id }} data-action="add" class="chg-quantity update-cart" src="{% static  'store/img/arrow-up.png' %}" alt="arrow-up">
           <img data-product={{ item.product.id }} data-action="remove" class="chg-quantity update-cart" src="{% static  'store/img/arrow-down.png' %}" alt="arrow-down">
@@ -61,4 +67,5 @@
 
 {% block script %}
   <script type="text/javascript" src="{% static 'store/js/makeOrder.js' %}"></script>
+  <script type="text/javascript" src="{% static 'store/js/cart.js' %}"></script>
 {% endblock script %}
