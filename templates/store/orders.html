@@ -1,59 +1,72 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Корзина{% endblock %}
+{% block title %}Заказы{% endblock %}
 {% load thumbnail %}
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-lg-8">
     <div class="box-element">
       <a class="btn btn-outline-dark" href="{% url 'index' %}">&#x2190; На главную</a>
-
-      <br>
-      <br>
-
-      <table class="table">
-        <tr>
-        <th><h5>Общее кол-во: <strong>{{ order.get_total_items }}</strong></h5></th>
-        <th><h5>Полная стоимость: <strong>{{ order.get_total_price|floatformat:0 }} р.</strong></h5></th>
-        <th>
-          <a style="float: right; margin:5px" class="btn btn-success" href="{% url 'orders' %}">Заказать</a>
-        </th>
-        </tr>
-      </table>
-      <div>
-        <h5><strong>Дата доставки:</strong> {{ order.delivery_date }}</h5>
-        <h5><strong>Адрес доставки:</strong> {{ order.address }}</h5>
-      </div>
-    </div>
-
+    <br>
     <br>
 
+    {% for order in orders %}
     <div class="box-element">
-    <div class="cart-row">
-      <div style="flex: 2"></div>
-      <div style="flex: 2"><strong>Наименование</strong></div>
-      <div style="flex: 1"><strong>Цена</strong></div>
-      <div style="flex: 1"><strong>Кол-во (шт.)</strong></div>
-      <div style="flex: 1"><strong>Общая стоимость</strong></div>
-    </div>
-    {% for item in items %}
-    <div class="cart-row">
-      {% thumbnail item.product.image "974x730" crop="center" upscale=True as im %}
-      <div style="flex: 2; display: inline-block"><img class="row-image" src="{{ im.url }}" alt="product"></div>
-      {% endthumbnail %}
-      <div style="flex: 2">{{ item.product }}</div>
-      <div style="flex: 1">{{ item.product.price|floatformat:0 }} р. / кг.</div>
-      <div style="flex:1">
-        <p class="quantity">{{ item.quantity }}</p>
-        <div class="quantity">
-          <img data-product={{ item.product.id }} data-action="add" class="chg-quantity update-cart" src="{% static  'store/img/arrow-up.png' %}" alt="arrow-up">
-          <img data-product={{ item.product.id }} data-action="remove" class="chg-quantity update-cart" src="{% static  'store/img/arrow-down.png' %}" alt="arrow-down">
-        </div>
+      <div class="card-header">
+        <h5 style="margin-top: 20px;" class="my-0 font-weight-normal">Номер заказа: <strong>{{ order.id }}</strong></h5>
+        {% if order.status == 'formed' %}
+        <h5> Статус заказа: <strong>заказ сформирован и ожидает обработки</strong></h5>
+        {% elif order.status == 'processed' %}
+        <h5> Статус заказа: <strong>заказ обработан и ожидает оплаты</strong></h5>
+        {% elif order.status == 'paid' %}
+        <h5> Статус заказа: <strong>заказ олачен</strong></h5>
+        {% elif order.status == 'shipped' %}
+        <h5> Статус заказа: <strong>заказ отправлен</strong></h5>
+        {% endif %}
+        <br>
       </div>
-      <div style="flex: 1">{{ item.get_total|floatformat:0 }} р.</div>
-    </div>
+      <div class="cart-row">
+        <div style="flex: 2"></div>
+        <div style="flex: 2"><strong>Наименование</strong></div>
+        <div style="flex: 1"><strong>Цена</strong></div>
+        <div style="flex: 1"><strong>Кол-во (шт.)</strong></div>
+        <div style="flex: 1"><strong>Общий вес</strong></div>
+        <div style="flex: 1"><strong>Общая стоимость</strong></div>
+      </div>
+      {% for item in order.orderitem_set.all %}
+        <div class="cart-row">
+          {% thumbnail item.product.image "974x730" crop="center" upscale=True as im %}
+          <div style="flex: 2; display: inline-block"><img class="row-image" src="{{ im.url }}" alt="product"></div>
+          {% endthumbnail %}
+          <div style="flex: 2"><p>{{ item.product }}</p></div>
+          <div style="flex: 1"><p>{{ item.product.price|floatformat:0 }} р. / кг.</p></div>
+          <div style="flex: 1"><p>{{ item.quantity }} шт.</p></div>
+          <div style="flex: 1"><p>{{ item.weight }} гр.</p></div>
+          <div style="flex: 1"><p>{{ item.get_total|floatformat:0 }} р.</p></div>
+        </div>
       {% endfor %}
-    </div>
+        <div class="cart-row">
+          <div style="flex: 7"><p><h5>Общее кол-во: <strong>{{ order.get_total_items }} шт.</strong></h5></div>
+          <div style="flex: 2"><p><h5>Полная стоимость: <strong>{{ order.get_total_price|floatformat:0 }} р.</strong></h5></div>
+        </div>
+      <div class="cart-row">
+      <div style="flex: 7">
+        <h5>Дата доставки: <strong>{{ order.delivery_date }}</strong></h5>
+      </div>
+      </div>
+      <div class="cart-row">
+      <div style="flex: 5">
+        <h5>Адрес доставки: <strong>{{ order.address }}</strong></h5>
+      </div>
+      <div style="flex: 1">
+        {% if order.status == 'processed' %}
+        <a  class="btn btn-success make-order" href="#">Оплатить</a>
+        {% endif %}
+      </div>
+      </div>
+    </div><br>
+    {% endfor %}
   </div>
+</div>
 </div>
 {% endblock %}

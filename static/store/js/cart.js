@@ -1,4 +1,11 @@
 let updateBtns = document.getElementsByClassName('update-cart')
+let badge = document.getElementById('cart-total')
+
+if (user !== 'AnonymousUser') {
+    if (badge !== null) {
+        getTotalItem(user)
+    }
+}
 
 for (let i = 0; i < updateBtns.length; i++) {
     updateBtns[i].addEventListener('click', function () {
@@ -41,7 +48,27 @@ function updateOrderItem(productId, action){
                     document.getElementById(itemquantity).textContent = data.quantity
                     document.getElementById("total-items").textContent = data.total_items
                 }
+            getTotalItem(user)
             }
         })
 
+}
+
+function getTotalItem(user){
+    console.log('updating counter...')
+    let url = "/basket/cart_counter/"
+    fetch(url, {
+        method: 'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
+        },
+        body: JSON.stringify({'user': user})
+    })
+        .then((response)=>{
+            return response.json()
+    })
+        .then((data) => {
+            badge.textContent = data.count
+            })
 }

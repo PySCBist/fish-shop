@@ -48,9 +48,9 @@
       {% thumbnail item.product.image "974x730" crop="center" upscale=True as im %}
       <div style="flex: 2; display: inline-block"><img class="row-image" src="{{ im.url }}" alt="product"></div>
       {% endthumbnail %}
-      <div style="flex: 2">{{ item.product }}</div>
-      <div style="flex: 2">{{ item.product.description }}</div>
-      <div style="flex: 1">{{ item.product.price|floatformat:0 }} р. / кг.</div>
+      <div style="flex: 2"><p>{{ item.product }}</p></div>
+      <div style="flex: 2"><p>{{ item.product.description }}</p></div>
+      <div style="flex: 1"><p>{{ item.product.price|floatformat:0 }} р. / кг.</p></div>
       <div style="flex:1">
         <p class="quantity" id="item-quantity{{ item.product.id }}">{{ item.quantity }}</p>
         <div class="quantity">

@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views import View
 from django.views.generic import ListView
 
 from .models import Product, Order, OrderItem, DeliveryDate
@@ -11,6 +12,24 @@ from .models import Product, Order, OrderItem, DeliveryDate
 class ProductListView(ListView):
     model = Product
     template_name = 'store/index.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        if Order.objects.filter(customer=self.request.user,
+                                status='not formed').exists():
+            order = Order.objects.get(customer=self.request.user,
+                                      status='not formed')
+            context['products_ids'] = order.orderitem_set.all()
+        return context
+
+
+class CartCountView(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        user = data['user']
+        items = Order.objects.get(customer__username=user,
+                                  status='not formed').get_total_items
+        return JsonResponse({'count': items})
 
 
 def basket(request):
@@ -32,10 +51,10 @@ def basket(request):
 
 @login_required()
 def orders(request):
-    order = Order.objects.get(customer=request.user, status='formed')
-    items = order.orderitem_set.all()
+    orders_qs = Order.objects.exclude(customer=request.user,
+                                      status='not formed')
     return render(request, 'store/orders.html',
-                  context={'items': items, 'order': order})
+                  context={'orders': orders_qs})
 
 
 def about(request):

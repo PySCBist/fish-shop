@@ -110,6 +110,9 @@ class OrderItem(models.Model):
         constraints = [models.UniqueConstraint(fields=['product', 'order'],
                                                name='unique_orderitem')]
 
+    def __str__(self):
+        return str(self.product)
+
     @property
     def get_total(self):
-        return self.product.price * self.weight
+        return self.product.price * self.weight/1000

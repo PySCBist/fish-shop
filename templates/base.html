@@ -11,8 +11,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'store/img/favicon_io/favicon-32x32.png' %}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'store/img/favicon_io/favicon-16x16.png' %}">
 	<link rel="manifest" href="{% static 'store/img/favicon_io/site.webmanifest' %}">
-
-    <script type="text/javascript">
+  <script type="text/javascript">
       var user = '{{ request.user }}'
       function getToken(name) {
       let cookieValue = null;
@@ -30,8 +29,7 @@
         return cookieValue;
         }
         const csrftoken = getToken('csrftoken');
-
-	  </script>
+  </script>
   </head>
   <body>
   {% include 'includes/nav.html' %}
