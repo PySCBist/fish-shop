@@ -7,10 +7,10 @@ body{
 }
 
 #cart-icon{
-	width:25px;
+	width:40px;
 	display: inline-block;
 	margin-left: 15px;
-	margin-right: 20px;
+	margin-right: 40px;
 	float: right;
 }
 
@@ -23,6 +23,7 @@ body{
 	height: 25px;
 	border-radius: 50%;
 	font-size: 14px;
+	margin-right: 25px;
 }
 
 .cart-row {
@@ -69,4 +70,8 @@ body{
 
 .hidden{
 	display: none!important;
+}
+
+.form-select {
+	width: 25%;
 }

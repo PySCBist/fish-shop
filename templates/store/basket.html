@@ -16,7 +16,7 @@
         <th><h5>Общее кол-во: <strong id="total-items">{{ order.get_total_items }}</strong> шт.</h5></th>
         <th>
           {% if order.get_total_items > 0 and order.delivery_date %}
-            <a style="float: right; margin:5px" class="btn btn-success make-order" href="#">Заказать</a>
+            <a style="float: right; margin:5px" class="btn btn-success make-order" href="{% url 'orders' %}">Заказать</a>
           {% endif %}
         </th>
         </tr>
@@ -28,8 +28,18 @@
 		  {% else %}Нет доступной даты доставки</h5>
 		   <th>Вы сможете сделать заказ, когда появится новая дата доставки.</th>
 		  {% endif %}
-
-        <h5><strong>Адрес доставки:</strong> {{ order.address }}</h5>
+		<div class="row">
+		<div style="flex: 1">
+		  <h5><strong>Адрес доставки:</strong></h5></div>
+		<div style="flex: 9">
+		  <select class="form-select" id="address" aria-label="Пример выбора по умолчанию">
+			<option selected>{% if order.address %}{{ order.address }}{% else %}Выберите адрес доставки{% endif %}</option>
+			{% for address in addresses %}
+			<option value="{{ address.id }}">{{ address }}</option>
+			{% endfor %}
+		  </select>
+		</div>
+	</div>
       </div>
     </div>
 
