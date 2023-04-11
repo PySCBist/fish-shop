@@ -19,7 +19,7 @@
         {% elif order.status == 'processed' %}
         <h5> Статус заказа: <strong>заказ обработан и ожидает оплаты</strong></h5>
         {% elif order.status == 'paid' %}
-        <h5> Статус заказа: <strong>заказ олачен</strong></h5>
+        <h5> Статус заказа: <strong>заказ оплачен</strong></h5>
         {% elif order.status == 'shipped' %}
         <h5> Статус заказа: <strong>заказ отправлен</strong></h5>
         {% endif %}
@@ -60,7 +60,9 @@
       </div>
       <div style="flex: 1">
         {% if order.status == 'processed' %}
-        <a  class="btn btn-success make-payment {{ order.id }}" href="#">Оплатить</a>
+        <a  class="btn btn-primary make-payment {{ order.id }}" href="#">Оплатить</a>
+		  {% elif order.status == 'paid'%}
+		  <p class="btn btn-success disabled">Оплачено</p>
         {% endif %}
       </div>
       </div>
@@ -75,9 +77,14 @@
   <script type="text/javascript" src="{% static 'store/js/cart.js' %}"></script>
   <script type="text/javascript">
   let payButtons = document.getElementsByClassName("make-payment")
-  let orderId = payButtons["0"].className.split(" ")[3]
+  for (let i = 0; i < payButtons.length; i++) {
+      payButtons[i].addEventListener('click', function (){
+          let orderId = payButtons[i].className.split(" ")[payButtons[i].className.split(" ").length - 1]
+		  makePayment(orderId)
+	  })
+  }
 
-  function makePayment(){
+  function makePayment(orderId){
       let url = {% url 'make_payment' %};
       fetch(url, {
       method: "POST",
@@ -88,15 +95,16 @@
       body:JSON.stringify({
           'order_id': orderId
       })
-  }).then((response) => response.json())
-      .then((data) => {
-          console.log('Success:', data);
-          alert('Оплата произведена успешно!')
-          window.location.href = "{% url 'success_payment' %}"
-      })
+  })
+		  .then((response) => response.json())
+		  .then((data) => {
+            if(data === 'Success') {
+                console.log('Result:', data);
+                window.location.href = {% url 'success_payment' %}
+            } else {
+                alert('Ошибка при оплате.');
+            }
+          })
   }
-
-
-
   </script>
 {% endblock script %}

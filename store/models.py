@@ -99,7 +99,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL,
                                 blank=False, null=True, verbose_name='Продукт')
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=False,
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=False,
                               null=True, verbose_name='Заказ')
     quantity = models.PositiveIntegerField(default=0, blank=False, null=True,
                                            verbose_name='Кол-во (шт.)')

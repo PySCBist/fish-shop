@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView
@@ -16,11 +16,14 @@ class ProductListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
+        order_items = []
         if Order.objects.filter(customer=self.request.user,
                                 status='not formed').exists():
             order = Order.objects.get(customer=self.request.user,
                                       status='not formed')
-            context['products_ids'] = order.orderitem_set.all()
+            order_items = order.orderitem_set.all().values_list('product_id',
+                                                                flat=True)
+        context['order_items'] = order_items
         return context
 
 
@@ -120,9 +123,10 @@ def process_order(request):
         order_id = json.loads(request.body)['order_id']
         order = Order.objects.get(id=order_id)
         order.transaction_id = transaction_id
-        return JsonResponse(f'Successfully payment order {order_id}',
-                            safe=False)
+        order.status = 'paid'
+        order.save()
+        return JsonResponse(f'Success', safe=False)
 
 
 def success_payment(request):
-    render(request, template_name='store/success_payment.html', context={})
+    return render(request, 'store/success_payment.html', context={})

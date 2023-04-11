@@ -11,20 +11,15 @@ for (let i = 0; i < updateBtns.length; i++) {
     updateBtns[i].addEventListener('click', function () {
         let productId = this.dataset.product
         let action = this.dataset.action
-        console.log('productId:', productId, 'action:', action)
-
-        console.log('USER:', user)
         if (user === 'AnonymousUser') {
             console.log('Not logged in')
         } else {
-            updateOrderItem(productId, action)
+            updateOrderItem(productId, action, updateBtns[i])
         }
     })
 }
 
-function updateOrderItem(productId, action){
-    console.log('User is logged in, sending data...')
-
+function updateOrderItem(productId, action, updateBtn){
     let url = '/update_item/'
 
     fetch(url, {
@@ -48,6 +43,9 @@ function updateOrderItem(productId, action){
                     document.getElementById(itemquantity).textContent = data.quantity
                     document.getElementById("total-items").textContent = data.total_items
                 }
+                else {
+                    changeButton(updateBtn)
+                }
             getTotalItem(user)
             }
         })
@@ -55,7 +53,6 @@ function updateOrderItem(productId, action){
 }
 
 function getTotalItem(user){
-    console.log('updating counter...')
     let url = "/basket/cart_counter/"
     fetch(url, {
         method: 'POST',
@@ -71,4 +68,10 @@ function getTotalItem(user){
         .then((data) => {
             badge.textContent = data.count
             })
+}
+
+function changeButton(button){
+    button.className = button.className.replace("btn-primary", "btn-outline-primary")
+    button.textContent = 'В корзине'
+    button.attributes[1]["nodeValue"] = "remove"
 }
