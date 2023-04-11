@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}FishShop | Удаление рецепта{% endblock %}
+{% block link %}<link rel="stylesheet" href="{% static 'pages/index.css' %}">{% endblock %}
+{% block content %}
+    <div class="custom-center-block">
+        <p class="custom-text-block"><h2 align="center">Вы действительно хотите удалить рецепт<br>"{{  recipe.title }}"?</h2></p>
+        <form class="form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+        <div class="custom-button-block">
+            <p class="button"><button class="button button_style_blue" type="submit">Да!</button></p>
+        </div>
+        </form>
+    </div>
+{% endblock %}

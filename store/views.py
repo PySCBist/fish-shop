@@ -108,7 +108,21 @@ def make_order(request):
             order.address = address
             order.date = timezone.now()
             order.save()
-            return redirect('orders')
+            return JsonResponse('Order was formed.', safe=False)
         return JsonResponse('No products in basket. Order not formed.',
                             safe=False)
     return JsonResponse('GET method not allowed', safe=False)
+
+
+def process_order(request):
+    if request.method == 'POST':
+        transaction_id = timezone.now().timestamp()
+        order_id = json.loads(request.body)['order_id']
+        order = Order.objects.get(id=order_id)
+        order.transaction_id = transaction_id
+        return JsonResponse(f'Successfully payment order {order_id}',
+                            safe=False)
+
+
+def success_payment(request):
+    render(request, template_name='store/success_payment.html', context={})

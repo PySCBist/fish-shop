@@ -11,4 +11,6 @@ urlpatterns = [
     path('make_order/', views.make_order, name='make_order '),
     path('basket/cart_counter/', views.CartCountView.as_view(),
          name='cart_counter'),
+    path('process_order/', views.process_order, name='make_payment'),
+    path('success_payment/', views.success_payment, name='success_payment'),
 ]

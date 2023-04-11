@@ -29,11 +29,11 @@
 		   <th>Вы сможете сделать заказ, когда появится новая дата доставки.</th>
 		  {% endif %}
 		<div class="row">
-		<div style="flex: 1">
+		<div style="flex: 2">
 		  <h5><strong>Адрес доставки:</strong></h5></div>
-		<div style="flex: 9">
+		<div style="flex: 13">
 		  <select class="form-select" id="address" aria-label="Пример выбора по умолчанию">
-			<option selected>{% if order.address %}{{ order.address }}{% else %}Выберите адрес доставки{% endif %}</option>
+			<option selected{% if order.address %} value="{{ order.address.id }}">{{ order.address }}{% else %}>Выберите адрес доставки{% endif %}</option>
 			{% for address in addresses %}
 			<option value="{{ address.id }}">{{ address }}</option>
 			{% endfor %}

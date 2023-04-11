@@ -26,7 +26,7 @@ function makeOrder(){
             return response.json()
     })
         .then((data) => {
-            console.log('data:', data)
-            location.reload()
+            console.log('Result:', data);
+            window.location.href = "/orders/"
         })
 }

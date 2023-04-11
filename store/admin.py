@@ -20,7 +20,8 @@ admin.site.register(Product, ProductAdmin)
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'date', 'delivery_date', 'status',)
+    list_display = (
+    'id', 'customer', 'date', 'delivery_date', 'status', 'transaction_id')
     search_fields = ('customer', 'date',)
     list_filter = ('customer', 'date',)
     ordering = ('date', 'customer',)

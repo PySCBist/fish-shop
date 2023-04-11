@@ -74,6 +74,8 @@ class Order(models.Model):
     delivery_date = models.ForeignKey(DeliveryDate, on_delete=models.SET_NULL,
                                       null=True, blank=True,
                                       verbose_name='Дата доставки')
+    transaction_id = models.CharField(max_length=30, verbose_name='Транзакция',
+                                      null=True, blank=True)
 
     class Meta:
         ordering = ['-date']
@@ -115,4 +117,4 @@ class OrderItem(models.Model):
 
     @property
     def get_total(self):
-        return self.product.price * self.weight/1000
+        return self.product.price * self.weight / 1000
