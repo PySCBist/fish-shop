@@ -1,4 +1,12 @@
-<footer class="footer mt-auto py-3 bg-light">
+{% load static %}
+<footer class="footer mt-auto py-3" style="background-color: #DCDCDC">
   <div class="container">
+    <div class="row">
+      <a style="flex: 1" href="{% url 'index' %}">
+        <img src="{% static 'store/img/fish.png' %}" alt="Fishicon" width="70" height="50">
+      </a>
+      <a class="link-secondary" style="flex: 5" href="{% url 'contacts' %}">Связаться с нами</a>
+      <a style="flex: 1">FishShop 2023 &#169;</a>
+    </div>
   </div>
 </footer>

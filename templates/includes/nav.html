@@ -11,8 +11,8 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-link{% if request.resolver_match.url_name == 'index' %} active {% endif %}" aria-current="page" href="{% url 'index' %}">Главная</a>
-        <a class="nav-link{% if request.resolver_match.url_name == 'orders' %} active {% endif %}" aria-current="page" href="{% url 'orders' %}">Заказы</a>
-        <a class="nav-link{% if request.resolver_match.url_name == 'about' %} active {% endif %}" aria-current="page" href="{% url 'about' %}">О нас</a>
+        <a class="nav-link{% if request.resolver_match.url_name == 'orders' %} active {% endif %}" aria-current="page" href="{% url 'orders' %}">Мои заказы</a>
+        <a class="nav-link{% if request.resolver_match.url_name == 'about' %} active {% endif %}" aria-current="page" href="{% url 'about' %}">О магазине</a>
 	  	<p class="form-inline my-2 my-lg-0 position-absolute end-0">
 		  <a href="#" class="btn btn-warning">Войти</a>
 		  <a href="{% url 'basket' %}">

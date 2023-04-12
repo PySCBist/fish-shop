@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Вы вышли из системы{% endblock %}
+{% load static %}
+{% block content %}
+  <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+	<h1 class="display-4">Ждём Вас снова!</h1>
+	<p class="lead">Вы вышли из своей учётной записи.</p>
+  	<img class="img-thumbnail" style="background: transparent; border: 0;" src="{% static 'store/img/thanks.png' %}" alt="troutpic">
+  </div>
+{% endblock %}

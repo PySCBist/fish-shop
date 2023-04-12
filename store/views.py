@@ -19,8 +19,9 @@ class ProductListView(ListView):
         order_items = []
         if Order.objects.filter(customer=self.request.user,
                                 status='not formed').exists():
-            order = Order.objects.get(customer=self.request.user,
-                                      status='not formed')
+            order = Order.objects.filter(customer=self.request.user,
+                                         status='not formed').order_by('date')[
+                0]
             order_items = order.orderitem_set.all().values_list('product_id',
                                                                 flat=True)
         context['order_items'] = order_items
@@ -33,8 +34,9 @@ class CartCountView(View):
         user = data['user']
         if Order.objects.filter(customer__username=user,
                                 status='not formed').exists():
-            items = Order.objects.get(customer__username=user,
-                                      status='not formed').get_total_items
+            items = Order.objects.filter(customer__username=user,
+                                         status='not formed').order_by('date')[
+                0].get_total_items
         else:
             items = 0
         return JsonResponse({'count': items})
@@ -44,11 +46,8 @@ def basket(request):
     addresses = DeliveryAddress.objects.all()
     if request.user.is_authenticated and Order.objects.filter(
             customer=request.user, status='not formed').exists():
-        order = Order.objects.get(customer=request.user,
-                                  status='not formed')
-        if DeliveryDate.objects.filter(status='open').exists():
-            order.delivery_date = DeliveryDate.objects.get(status='open')
-            order.save()
+        order = Order.objects.filter(customer=request.user,
+                                     status='not formed').order_by('date')[0]
         items = order.orderitem_set.all()
         addresses = DeliveryAddress.objects.all()
     else:
@@ -56,9 +55,11 @@ def basket(request):
         order = {'get_total_items': 0,
                  'get_total_price': 0,
                  'addresses': addresses}
+    dates = DeliveryDate.objects.filter(status='open')
     return render(request, 'store/basket.html',
                   context={'items': items, 'order': order,
-                           'addresses': addresses})
+                           'addresses': addresses,
+                           'dates': dates})
 
 
 @login_required()
@@ -100,15 +101,18 @@ def update_item(request):
 
 def make_order(request):
     if request.method == 'POST':
-        if Order.objects.filter(customer=request.user,
-                                status='not formed').exists():
+        order = Order.objects.filter(customer=request.user,
+                                     status='not formed')
+        if order:
             data = json.loads(request.body)
             address_id = data['address']
+            date_id = data['date']
             address = DeliveryAddress.objects.get(id=address_id)
-            order = Order.objects.get(customer=request.user,
-                                      status='not formed')
+            delivery_date = DeliveryDate.objects.get(id=date_id)
+            order = order.order_by('date')[0]
             order.status = 'formed'
             order.address = address
+            order.delivery_date = delivery_date
             order.date = timezone.now()
             order.save()
             return JsonResponse('Order was formed.', safe=False)
@@ -130,3 +134,7 @@ def process_order(request):
 
 def success_payment(request):
     return render(request, 'store/success_payment.html', context={})
+
+
+def contacts(request):
+    return render(request, 'store/contacts.html', context={})
