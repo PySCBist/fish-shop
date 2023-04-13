@@ -33,13 +33,13 @@ class ProductListView(ListView):
 
 class CartCountView(View):
     def post(self, request, *args, **kwargs):
-        if Order.objects.filter(customer=request.user,
-                                status='not formed').exists():
-            items = Order.objects.filter(customer=request.user,
-                                         status='not formed').order_by('date')[
-                0].get_total_items
-        else:
-            items = 0
+        items = 0
+        if request.user.is_authenticated:
+            if Order.objects.filter(customer=request.user,
+                                    status='not formed').exists():
+                items = Order.objects.filter(customer=request.user,
+                                             status='not formed').order_by(
+                    'date')[0].get_total_items
         return JsonResponse({'count': items})
 
 

@@ -1,10 +1,8 @@
 let updateBtns = document.getElementsByClassName('update-cart')
 let badge = document.getElementById('cart-total')
 
-if (user !== 'AnonymousUser') {
-    if (badge !== null) {
-        getTotalItem(user)
-    }
+if (badge !== null) {
+    getTotalItem(user)
 }
 
 for (let i = 0; i < updateBtns.length; i++) {
@@ -52,7 +50,7 @@ function updateOrderItem(productId, action, updateBtn){
 
 }
 
-function getTotalItem(user){
+function getTotalItem(){
     let url = "/basket/cart_counter/"
     fetch(url, {
         method: 'POST',

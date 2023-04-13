@@ -62,7 +62,7 @@
         {% if order.status == 'processed' %}
         <a  class="btn btn-primary make-payment {{ order.id }}" href="#">Оплатить</a>
 		  {% elif order.status == 'paid'%}
-		  <p class="btn btn-success disabled">Оплачено</p>
+		  <p class="btn btn-outline-primary-warning disabled">Оплачено</p>
         {% endif %}
       </div>
       </div>
