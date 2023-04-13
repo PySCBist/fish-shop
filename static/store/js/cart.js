@@ -60,7 +60,7 @@ function getTotalItem(user){
             'Content-Type':'application/json',
             'X-CSRFToken':csrftoken,
         },
-        body: JSON.stringify({'user': user})
+        body: JSON.stringify()
     })
         .then((response)=>{
             return response.json()
@@ -71,7 +71,7 @@ function getTotalItem(user){
 }
 
 function changeButton(button){
-    button.className = button.className.replace("btn-primary", "btn-outline-primary")
+    button.className = button.className.replace("btn-warning", "btn-outline-warning")
     button.textContent = 'В корзине'
     button.attributes[1]["nodeValue"] = "remove"
 }

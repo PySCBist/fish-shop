@@ -16,25 +16,26 @@ class ProductListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        order_items = []
-        if Order.objects.filter(customer=self.request.user,
-                                status='not formed').exists():
-            order = Order.objects.filter(customer=self.request.user,
-                                         status='not formed').order_by('date')[
-                0]
-            order_items = order.orderitem_set.all().values_list('product_id',
-                                                                flat=True)
-        context['order_items'] = order_items
+        if self.request.user.is_authenticated:
+            order_items = []
+            if Order.objects.filter(customer=self.request.user,
+                                    status='not formed').exists():
+                order = Order.objects.filter(customer=self.request.user,
+                                             status='not formed').order_by(
+                    'date')[
+                    0]
+                order_items = order.orderitem_set.all().values_list(
+                    'product_id',
+                    flat=True)
+            context['order_items'] = order_items
         return context
 
 
 class CartCountView(View):
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        user = data['user']
-        if Order.objects.filter(customer__username=user,
+        if Order.objects.filter(customer=request.user,
                                 status='not formed').exists():
-            items = Order.objects.filter(customer__username=user,
+            items = Order.objects.filter(customer=request.user,
                                          status='not formed').order_by('date')[
                 0].get_total_items
         else:
@@ -64,8 +65,8 @@ def basket(request):
 
 @login_required()
 def orders(request):
-    orders_qs = Order.objects.exclude(customer=request.user,
-                                      status='not formed')
+    orders_qs = Order.objects.filter(customer=request.user).exclude(
+        status='not formed')
     return render(request, 'store/orders.html',
                   context={'orders': orders_qs})
 
