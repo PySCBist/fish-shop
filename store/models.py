@@ -36,7 +36,8 @@ class DeliveryDate(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=20, blank=False,
                             verbose_name='Продукт')
-    price = models.FloatField(verbose_name='Цена')
+    price = models.DecimalField(verbose_name='Цена', max_digits=6,
+                                decimal_places=2)
     description = models.TextField(max_length=150,
                                    verbose_name='Описание товара',
                                    blank=False)

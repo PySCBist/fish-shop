@@ -28,7 +28,7 @@
 			{% if dates %}
           <div style="flex: 13">
             <select class="form-select" id="delivery_date" aria-label="Пример выбора по умолчанию">
-              <option selected{% if order.delivery_date %} value="{{ order.delivery_date.id }}">{{ order.delivery_date }}{% else %}>Выберите адрес доставки{% endif %}</option>
+              <option selected{% if order.delivery_date %} value="{{ order.delivery_date.id }}">{{ order.delivery_date }}{% else %}>Выберите дату доставки{% endif %}</option>
               {% for date in dates %}
                 <option value="{{ date.id }}">{{ date }}</option>
               {% endfor %}
