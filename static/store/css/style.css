@@ -75,3 +75,17 @@ body{
 .form-select {
 	width: 25%;
 }
+
+.btn-warning.disabled {
+	background-color: #ffc107;
+	border-color: #ffc107;
+	opacity: unset;
+}
+
+.footer{
+	background-color: #DCDCDC;
+}
+
+html,body,#page,header {
+	height:100%;
+}
