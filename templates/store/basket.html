@@ -70,11 +70,11 @@
       {% thumbnail item.product.image "974x730" crop="center" upscale=True as im %}
       <div style="flex: 2; display: inline-block"><img class="row-image" src="{{ im.url }}" alt="product"></div>
       {% endthumbnail %}
-      <div style="flex: 2"><p>{{ item.product }}</p></div>
+      <div style="flex: 2"><p>{{ item.product.name }}</p></div>
       <div style="flex: 2"><p>{{ item.product.description }}</p></div>
       <div style="flex: 1"><p>{{ item.product.price|floatformat:0 }} р. / кг.</p></div>
       <div style="flex:1">
-        <p class="quantity" id="item-quantity{{ item.product.id }}">{{ item.quantity }}</p>
+        <p class="quantity" id="item-quantity-{{ item.product.id }}">{{ item.quantity }}</p>
         <div class="quantity">
           <img data-product={{ item.product.id }} data-action="add" class="chg-quantity update-cart" src="{% static  'store/img/arrow-up.png' %}" alt="arrow-up">
           <img data-product={{ item.product.id }} data-action="remove" class="chg-quantity update-cart" src="{% static  'store/img/arrow-down.png' %}" alt="arrow-down">

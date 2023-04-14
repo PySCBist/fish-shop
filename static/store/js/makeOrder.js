@@ -1,12 +1,15 @@
 
 let makeOrderBtn = document.getElementsByClassName('make-order')
-makeOrderBtn[0].addEventListener('click', function (){
+if (makeOrderBtn > 0){
+    makeOrderBtn[0].addEventListener('click', function (){
     if(user === 'AnonymousUser'){
         console.log('Not logged in')
     }else {
         makeOrder()
     }
     })
+}
+
 
 function makeOrder() {
     let url = '/make_order/'

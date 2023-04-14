@@ -21,7 +21,7 @@
           {% endthumbnail %}
           <h1 class="card-title pricing-card-title">{{ product.price|floatformat:0 }} &#8381; <small class="text-muted">/ кг.</small></h1>
           <p class="lead">Средний вес рыбки {{ product.description }}</p>
-		  {% if product.id not in order_items %}
+		  {% if product.id not in order_items or not user.is_auntificated %}
           <button data-product={{ product.id }} data-action="add" class="btn btn-warning add-btn update-cart">Добавить в корзину</button>
 		  {% else %}
           <button data-product={{ product.id }} data-action="remove" class="btn btn-outline-warning add-btn update-cart">В корзине</button>

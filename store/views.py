@@ -40,6 +40,14 @@ class CartCountView(View):
                 items = Order.objects.filter(customer=request.user,
                                              status='not formed').order_by(
                     'date')[0].get_total_items
+        else:
+            try:
+                cart = json.loads(request.COOKIES['cart'])
+            except KeyError:
+                cart = {}
+            for i in cart:
+                items += cart[i]['quantity']
+
         return JsonResponse({'count': items})
 
 
@@ -52,10 +60,32 @@ def basket(request):
         items = order.orderitem_set.all()
         addresses = DeliveryAddress.objects.all()
     else:
+        try:
+            cart = json.loads(request.COOKIES['cart'])
+        except KeyError:
+            cart = {}
+
         items = []
         order = {'get_total_items': 0,
                  'get_total_price': 0,
                  'addresses': addresses}
+
+        for product_id in cart:
+            product = Product.objects.get(id=product_id)
+
+            order['get_total_items'] += cart[product_id]['quantity']
+            item = {
+                'product': {
+                    'id': product.id,
+                    'name': product.name,
+                    'description': product.description,
+                    'price': product.price,
+                    'image': product.image
+                },
+                'quantity': cart[product_id]['quantity']
+            }
+            items.append(item)
+
     dates = DeliveryDate.objects.filter(status='open')
     return render(request, 'store/basket.html',
                   context={'items': items, 'order': order,
@@ -81,22 +111,29 @@ def update_item(request):
         product_id = int(data['productId'])
         action = data['action']
         product = Product.objects.get(id=product_id)
-        order, created = Order.objects.get_or_create(customer=request.user,
-                                                     status='not formed')
-        order_item, created = OrderItem.objects.get_or_create(order=order,
-                                                              product=product)
-        if action == 'add':
-            order_item.quantity += 1
-        elif action == 'remove':
-            order_item.quantity -= 1
-        order_item.save()
-        if order_item.quantity <= 0:
-            order_item.delete()
-        if order.get_total_items == 0:
-            order.delete()
-            return JsonResponse({"quantity": 0, "total_items": 0}, status=200)
-        return JsonResponse({"quantity": order_item.quantity,
-                             "total_items": order.get_total_items}, status=200)
+        if request.user.is_authenticated:
+            order, created = Order.objects.get_or_create(customer=request.user,
+                                                         status='not formed')
+            order_item, created = OrderItem.objects.get_or_create(order=order,
+                                                                  product=product)
+            if action == 'add':
+                order_item.quantity += 1
+            elif action == 'remove':
+                order_item.quantity -= 1
+            order_item.save()
+            if order_item.quantity <= 0:
+                order_item.delete()
+            if order.get_total_items == 0:
+                order.delete()
+                return JsonResponse({"quantity": 0, "total_items": 0},
+                                    status=200)
+            return JsonResponse({"quantity": order_item.quantity,
+                                 "total_items": order.get_total_items},
+                                status=200)
+        else:
+            cart = json.loads(request.COOKIES['cart'])
+
+
     return JsonResponse('GET method not allowed', safe=False)
 
 
