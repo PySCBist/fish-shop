@@ -16,7 +16,11 @@
         <th><h5>Общее кол-во: <strong id="total-items">{{ order.get_total_items }}</strong> шт.</h5></th>
         <th>
           {% if order.get_total_items > 0 and dates %}
-            <a style="float: right; margin:5px" class="btn btn-warning make-order" href="#">Заказать</a>
+			{% if user.is_auntificated %}
+            	<a style="float: right; margin:5px" class="btn btn-warning make-order" href="#">Заказать</a>
+			  {% else %}
+			  <p><a href="{% url 'login' %}">Войти</a> или <a href="{% url 'signup' %}">зарегистрироваться</a>, чтобы сделать заказ</p>
+			  {% endif %}
           {% endif %}
         </th>
         </tr>

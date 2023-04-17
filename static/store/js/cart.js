@@ -11,6 +11,7 @@ for (let i = 0; i < updateBtns.length; i++) {
         let action = this.dataset.action
         if (user === 'AnonymousUser') {
             addCookieItem(productId, action)
+            updateOrderItem(productId, action, updateBtns[i])
         } else {
             updateOrderItem(productId, action, updateBtns[i])
         }
@@ -89,6 +90,7 @@ function addCookieItem(productId, action) {
 
         if(cart[productId]['quantity'] <= 0){
             console.log('remove item')
+            location.reload()
             delete  cart[productId]
         }
     }

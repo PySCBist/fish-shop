@@ -16,8 +16,8 @@ class ProductListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
+        order_items = []
         if self.request.user.is_authenticated:
-            order_items = []
             if Order.objects.filter(customer=self.request.user,
                                     status='not formed').exists():
                 order = Order.objects.filter(customer=self.request.user,
@@ -27,7 +27,15 @@ class ProductListView(ListView):
                 order_items = order.orderitem_set.all().values_list(
                     'product_id',
                     flat=True)
-            context['order_items'] = order_items
+        else:
+            try:
+                cart = json.loads(self.request.COOKIES['cart'])
+            except KeyError:
+                cart = {}
+            if cart:
+                order_items = [int(key) for key in cart]
+                context['order_items'] = order_items
+        context['order_items'] = order_items
         return context
 
 
@@ -52,28 +60,50 @@ class CartCountView(View):
 
 
 def basket(request):
+    try:
+        cookies_cart = json.loads(request.COOKIES['cart'])
+    except KeyError:
+        cookies_cart = {}
     addresses = DeliveryAddress.objects.all()
-    if request.user.is_authenticated and Order.objects.filter(
-            customer=request.user, status='not formed').exists():
-        order = Order.objects.filter(customer=request.user,
-                                     status='not formed').order_by('date')[0]
-        items = order.orderitem_set.all()
-        addresses = DeliveryAddress.objects.all()
-    else:
-        try:
-            cart = json.loads(request.COOKIES['cart'])
-        except KeyError:
-            cart = {}
+    dates = DeliveryDate.objects.filter(status='open')
+    if request.user.is_authenticated:
+        if Order.objects.filter(customer=request.user,
+                                status='not formed').exists():
+            order = Order.objects.filter(customer=request.user,
+                                         status='not formed').order_by('date')[
+                0]
+            items = order.orderitem_set.all()
+            response = render(request, 'store/basket.html',
+                              context={'items': items, 'order': order,
+                                       'addresses': addresses,
+                                       'dates': dates})
+            if request.COOKIES.get('cart'):
+                response.delete_cookie('cart')
+            return response
+        elif cookies_cart:
+            order = Order.objects.create(customer=request.user,
+                                         status='not formed')
+            for product_id in cookies_cart:
+                product = Product.objects.get(id=product_id)
+                quantity = cookies_cart[product_id]['quantity']
+                OrderItem.objects.create(order=order, product=product,
+                                         quantity=quantity)
+                items = order.orderitem_set.all()
+                return render(request, 'store/basket.html',
+                              context={'items': items, 'order': order,
+                                       'addresses': addresses,
+                                       'dates': dates})
 
+    else:
         items = []
         order = {'get_total_items': 0,
                  'get_total_price': 0,
                  'addresses': addresses}
 
-        for product_id in cart:
+        for product_id in cookies_cart:
             product = Product.objects.get(id=product_id)
 
-            order['get_total_items'] += cart[product_id]['quantity']
+            order['get_total_items'] += cookies_cart[product_id]['quantity']
             item = {
                 'product': {
                     'id': product.id,
@@ -82,15 +112,13 @@ def basket(request):
                     'price': product.price,
                     'image': product.image
                 },
-                'quantity': cart[product_id]['quantity']
+                'quantity': cookies_cart[product_id]['quantity']
             }
             items.append(item)
-
-    dates = DeliveryDate.objects.filter(status='open')
-    return render(request, 'store/basket.html',
-                  context={'items': items, 'order': order,
-                           'addresses': addresses,
-                           'dates': dates})
+        return render(request, 'store/basket.html',
+                      context={'items': items, 'order': order,
+                               'addresses': addresses,
+                               'dates': dates})
 
 
 @login_required()
@@ -108,7 +136,7 @@ def about(request):
 def update_item(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        product_id = int(data['productId'])
+        product_id = data['productId']
         action = data['action']
         product = Product.objects.get(id=product_id)
         if request.user.is_authenticated:
@@ -132,7 +160,15 @@ def update_item(request):
                                 status=200)
         else:
             cart = json.loads(request.COOKIES['cart'])
-
+            total_items = 0
+            try:
+                quantity = cart[product_id]['quantity']
+            except KeyError:
+                quantity = 0
+            for prod_id in cart:
+                total_items += cart[prod_id]['quantity']
+            return JsonResponse({"quantity": quantity,
+                                 "total_items": total_items})
 
     return JsonResponse('GET method not allowed', safe=False)
 
