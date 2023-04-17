@@ -1,6 +1,5 @@
-
 let makeOrderBtn = document.getElementsByClassName('make-order')
-if (makeOrderBtn > 0){
+if (makeOrderBtn.length > 0){
     makeOrderBtn[0].addEventListener('click', function (){
     if(user === 'AnonymousUser'){
         console.log('Not logged in')

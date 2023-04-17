@@ -8,18 +8,18 @@
   <p class="lead">Закажите самую вкусную форель:</p>
 </div>
 <div class="container">
-  <div class="row row-cols-1 row-cols-md-2 mb-2 text-center">
+  <div class="row row-cols-1 row-cols-md-3 mb-2 text-center justify-content-center">
     {% for product in product_list %}
     <div class="col">
       <div class="card mb-6 shadow-sm h-100">
         <div class="card-header">
           <h4 class="my-0 font-weight-normal">{{ product.name }}</h4>
         </div>
+        {% thumbnail product.image "400x300" crop="center" upscale=True as im %}
+          <img src="{{ im.url }}" class="card-img-top" role="img" width="100%" alt="...">
+        {% endthumbnail %}
         <div class="card-body">
-          {% thumbnail product.image "974x730" crop="center" upscale=True as im %}
-          <img src="{{ im.url }}" class="card-img-top" alt="...">
-          {% endthumbnail %}
-          <h1 class="card-title pricing-card-title">{{ product.price|floatformat:0 }} &#8381; <small class="text-muted">/ кг.</small></h1>
+          <h2 class="card-title pricing-card-title">{{ product.price|floatformat:0 }} &#8381; <small class="text-muted">/ кг.</small></h2>
           <p class="lead">Средний вес рыбки {{ product.description }}</p>
 		  {% if product.id not in order_items %}
           <button data-product={{ product.id }} data-action="add" class="btn btn-warning add-btn update-cart">Добавить в корзину</button>

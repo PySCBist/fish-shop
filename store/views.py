@@ -17,24 +17,20 @@ class ProductListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         order_items = []
-        if self.request.user.is_authenticated:
-            if Order.objects.filter(customer=self.request.user,
-                                    status='not formed').exists():
-                order = Order.objects.filter(customer=self.request.user,
-                                             status='not formed').order_by(
-                    'date')[
-                    0]
-                order_items = order.orderitem_set.all().values_list(
-                    'product_id',
-                    flat=True)
-        else:
-            try:
-                cart = json.loads(self.request.COOKIES['cart'])
-            except KeyError:
-                cart = {}
-            if cart:
-                order_items = [int(key) for key in cart]
-                context['order_items'] = order_items
+        try:
+            cookie_cart = json.loads(self.request.COOKIES['cart'])
+        except KeyError:
+            cookie_cart = {}
+        if self.request.user.is_authenticated and Order.objects.filter(
+                customer=self.request.user,
+                status='not formed').exists():
+            order = Order.objects.filter(customer=self.request.user,
+                                         status='not formed').order_by(
+                'date')[0]
+            order_items = order.orderitem_set.all().values_list('product_id',
+                                                                flat=True)
+        elif cookie_cart:
+            order_items = [int(key) for key in cookie_cart]
         context['order_items'] = order_items
         return context
 
@@ -42,12 +38,12 @@ class ProductListView(ListView):
 class CartCountView(View):
     def post(self, request, *args, **kwargs):
         items = 0
-        if request.user.is_authenticated:
-            if Order.objects.filter(customer=request.user,
-                                    status='not formed').exists():
-                items = Order.objects.filter(customer=request.user,
-                                             status='not formed').order_by(
-                    'date')[0].get_total_items
+        if request.user.is_authenticated and Order.objects.filter(
+                customer=request.user,
+                status='not formed').exists():
+            items = Order.objects.filter(customer=request.user,
+                                         status='not formed').order_by(
+                'date')[0].get_total_items
         else:
             try:
                 cart = json.loads(request.COOKIES['cart'])
@@ -66,6 +62,9 @@ def basket(request):
         cookies_cart = {}
     addresses = DeliveryAddress.objects.all()
     dates = DeliveryDate.objects.filter(status='open')
+    items = []
+    order = {'get_total_items': 0,
+             'get_total_price': 0}
     if request.user.is_authenticated:
         if Order.objects.filter(customer=request.user,
                                 status='not formed').exists():
@@ -88,18 +87,17 @@ def basket(request):
                 quantity = cookies_cart[product_id]['quantity']
                 OrderItem.objects.create(order=order, product=product,
                                          quantity=quantity)
-                items = order.orderitem_set.all()
-                return render(request, 'store/basket.html',
-                              context={'items': items, 'order': order,
-                                       'addresses': addresses,
-                                       'dates': dates})
+            items = order.orderitem_set.all()
+            return render(request, 'store/basket.html',
+                          context={'items': items, 'order': order,
+                                   'addresses': addresses,
+                                   'dates': dates})
+
+        return render(request, 'store/basket.html',
+                      context={'items': items, 'order': order,
+                               'addresses': addresses, 'dates': dates})
 
     else:
-        items = []
-        order = {'get_total_items': 0,
-                 'get_total_price': 0,
-                 'addresses': addresses}
-
         for product_id in cookies_cart:
             product = Product.objects.get(id=product_id)
 
