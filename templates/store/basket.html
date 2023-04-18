@@ -31,8 +31,7 @@
         <h5><strong>Дата доставки:</strong></h5></div>
 			{% if dates %}
           <div style="flex: 13">
-            <select class="form-select" id="delivery_date" aria-label="Пример выбора по умолчанию">
-              <option selected{% if order.delivery_date %} value="{{ order.delivery_date.id }}">{{ order.delivery_date }}{% else %}>Выберите дату доставки{% endif %}</option>
+            <select class="form-select form-select-sm mb-3" id="delivery_date" aria-label="Пример выбора по умолчанию">
               {% for date in dates %}
                 <option value="{{ date.id }}">{{ date }}</option>
               {% endfor %}
@@ -42,8 +41,7 @@
 				<div style="flex: 2">
 				  <h5><strong>Адрес доставки:</strong></h5></div>
 				<div style="flex: 13">
-				  <select class="form-select" id="address" aria-label="Пример выбора по умолчанию">
-					<option selected{% if order.address %} value="{{ order.address.id }}">{{ order.address }}{% else %}>Выберите адрес доставки{% endif %}</option>
+				  <select class="form-select form-select-sm mb-3" style="width: 35%" id="address" aria-label="Пример выбора по умолчанию">
 					{% for address in addresses %}
 					<option value="{{ address.id }}">{{ address }}</option>
 					{% endfor %}
