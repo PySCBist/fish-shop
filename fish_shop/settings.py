@@ -109,3 +109,5 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 AUTH_USER_MODEL = 'users.CustomUser'
 
 SITE_ID = 1
+
+CSRF_TRUSTED_ORIGINS = [os.environ['HTTP']]

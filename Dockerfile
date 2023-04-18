@@ -1,4 +1,4 @@
-FROM python:3.7.6-slim-buster
+FROM python:3.11.3-slim-buster
 
 RUN apt-get update \
    && apt-get -y install build-essential \
