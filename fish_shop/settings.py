@@ -111,3 +111,45 @@ AUTH_USER_MODEL = 'users.CustomUser'
 SITE_ID = 1
 
 CSRF_TRUSTED_ORIGINS = [os.environ['HTTP']]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/logs.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
+        'telegram': {
+            'class': 'fish_shop.handlers.TelegramBotHandler',
+            'level': 'ERROR',
+            'formatter': 'verbose',
+            'token': os.environ['TELEGRAM_TOKEN'],
+            'chat_id': os.environ['CHAT_ID'],
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file', 'telegram'],
+            'level': 'WARNING',
+        },
+    },
+}
