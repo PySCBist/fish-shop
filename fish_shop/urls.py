@@ -1,7 +1,7 @@
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf.urls import handler404, handler500
 from fish_shop import settings
 
 urlpatterns = [
@@ -10,6 +10,9 @@ urlpatterns = [
     path('auth/', include('django.contrib.auth.urls')),
     path('', include('store.urls')),
 ]
+
+handler404 = "fish_shop.views.page_not_found"     # noqa
+handler500 = "fish_shop.views.server_error"       # noqa
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
