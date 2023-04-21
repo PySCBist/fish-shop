@@ -1,10 +1,19 @@
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
-
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
 from .forms import CreationForm
 
 
-class SignUp(CreateView):
-    form_class = CreationForm
-    success_url = reverse_lazy('index')
-    template_name = 'signup.html'
+def signup(request):
+    if request.method == 'POST':
+        form = CreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                login(request, user)
+            return redirect('index')
+    else:
+        form = CreationForm()
+    return render(request, 'signup.html', {'form': form})
