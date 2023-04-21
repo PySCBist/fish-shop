@@ -140,8 +140,8 @@ def update_item(request):
         if request.user.is_authenticated:
             order, created = Order.objects.get_or_create(customer=request.user,
                                                          status='not formed')
-            order_item, created = OrderItem.objects.get_or_create(order=order,
-                                                                  product=product)
+            order_item, created = OrderItem.objects.get_or_create(
+                order=order, product=product)
             if action == 'add':
                 order_item.quantity += 1
             elif action == 'remove':
@@ -201,7 +201,7 @@ def process_order(request):
         order.transaction_id = transaction_id
         order.status = 'paid'
         order.save()
-        return JsonResponse(f'Success', safe=False)
+        return JsonResponse('Success', safe=False)
 
 
 def success_payment(request):
