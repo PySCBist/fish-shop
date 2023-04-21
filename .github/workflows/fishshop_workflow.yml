@@ -49,7 +49,7 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
-        passphrase: ${{ secrets.PASSWORD }}
+        password: ${{ secrets.PASSWORD }}
         script: |
           sudo docker compose stop
           sudo docker compose rm -f
