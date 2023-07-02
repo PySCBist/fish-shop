@@ -131,3 +131,4 @@ dmypy.json
 media/
 /promise_project/static/photos/pushilin.jpg
 /store/migrations/
+/settings for debug
